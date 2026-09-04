@@ -1,19 +1,77 @@
+/* ============================================================
+   VaultDiary — Pastel Modern Theme
+   ============================================================ */
+
+:root {
+  --bg: #FAF7FF;
+  --surface: #FFFFFF;
+  --surface-alt: #F3EEFA;
+  --accent: #B5A6F2;
+  --accent-hover: #9C86E8;
+  --accent-soft: #EDE7FB;
+  --pastel-pink: #FBD5E0;
+  --pastel-mint: #C9EAD8;
+  --pastel-peach: #FCE3C8;
+  --text-primary: #3D3752;
+  --text-secondary: #79728F;
+  --border: #E7DFF5;
+  --success: #A8D8BC;
+  --success-text: #2F6B47;
+  --warning: #FBE3A8;
+  --warning-text: #8A6A1E;
+  --danger: #F6C7CC;
+  --danger-text: #A3454F;
+  --info: #BFE0F0;
+  --info-text: #2E6B85;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --shadow-soft: 0 8px 30px rgba(93, 76, 143, 0.08);
+  --shadow-hover: 0 12px 36px rgba(93, 76, 143, 0.14);
+}
+
 body {
-  background: #fafafa;
-  color: #333333;
+  background: var(--bg);
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(181, 166, 242, 0.10), transparent 40%),
+    radial-gradient(circle at 85% 25%, rgba(251, 213, 224, 0.14), transparent 40%),
+    radial-gradient(circle at 50% 90%, rgba(201, 234, 216, 0.12), transparent 45%);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  font-family: 'Inter', 'Segoe UI', sans-serif;
   margin-top: 5rem;
+  line-height: 1.6;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: #444444;
+  color: var(--text-primary);
+  font-family: 'Inter Tight', 'Inter', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
+a {
+  color: var(--accent-hover);
+}
+a:hover {
+  color: var(--accent);
+}
+
+/* ---------- Navbar ---------- */
 .bg-steel {
-  background-color: #5f788a;
+  background: linear-gradient(135deg, #C7B8F5 0%, #A79AE8 100%);
+  box-shadow: 0 4px 20px rgba(93, 76, 143, 0.15);
+}
+
+.site-header .navbar-brand {
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .site-header .navbar-nav .nav-link {
-  color: #cbd5db;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+  transition: color 0.25s ease;
 }
 
 .site-header .navbar-nav .nav-link:hover {
@@ -21,60 +79,227 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .site-header .navbar-nav .nav-link.active {
-  font-weight: 500;
+  font-weight: 600;
+  color: #ffffff;
 }
 
+/* ---------- Cards / content sections ---------- */
 .content-section {
-  background: #ffffff;
-  padding: 10px 20px;
-  border: 1px solid #dddddd;
-  border-radius: 3px;
-  margin-bottom: 20px;
+  background: var(--surface);
+  padding: 24px 28px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: 22px;
+  box-shadow: var(--shadow-soft);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
+.content-section:hover {
+  box-shadow: var(--shadow-hover);
+}
+
+/* ---------- Articles / posts ---------- */
 .article-title {
-  color: #444444;
+  color: var(--text-primary);
+  font-weight: 600;
 }
 
 a.article-title:hover {
-  color: #428bca;
+  color: var(--accent-hover);
   text-decoration: none;
 }
 
 .article-content {
   white-space: pre-line;
+  color: var(--text-primary);
 }
 
 .article-img {
   height: 65px;
   width: 65px;
   margin-right: 16px;
+  border-radius: 50%;
+  border: 3px solid var(--accent-soft);
+  object-fit: cover;
 }
 
 .article-metadata {
-  padding-bottom: 1px;
-  margin-bottom: 4px;
-  border-bottom: 1px solid #e3e3e3
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+
+.article-metadata a {
+  color: var(--text-secondary);
 }
 
 .article-metadata a:hover {
-  color: #333;
+  color: var(--accent-hover);
   text-decoration: none;
 }
 
 .article-svg {
-  width: 25px;
-  height: 25px;
+  width: 22px;
+  height: 22px;
   vertical-align: middle;
 }
 
+/* ---------- Account page ---------- */
 .account-img {
   height: 125px;
   width: 125px;
   margin-right: 20px;
   margin-bottom: 16px;
+  border-radius: 50%;
+  border: 4px solid var(--accent-soft);
+  object-fit: cover;
 }
 
 .account-heading {
-  font-size: 2.5rem;
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  padding: 8px 20px;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn-outline-info {
+  color: var(--accent-hover);
+  border-color: var(--accent);
+}
+
+.btn-outline-info:hover {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-soft);
+}
+
+.btn-secondary {
+  background-color: var(--surface-alt);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+  background-color: var(--border);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+.btn-danger {
+  background-color: var(--pastel-pink);
+  border-color: var(--pastel-pink);
+  color: var(--danger-text);
+}
+
+.btn-danger:hover {
+  background-color: #F3B9C5;
+  border-color: #F3B9C5;
+  color: var(--danger-text);
+}
+
+/* ---------- Forms ---------- */
+.form-control {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+  background-color: var(--surface);
+}
+
+.form-control:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.form-control-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* ---------- Alerts / flash messages ---------- */
+.alert {
+  border-radius: var(--radius-md);
+  border: none;
+  padding: 14px 18px;
+}
+
+.alert-success {
+  background-color: var(--success);
+  color: var(--success-text);
+}
+
+.alert-warning {
+  background-color: var(--warning);
+  color: var(--warning-text);
+}
+
+.alert-danger {
+  background-color: var(--danger);
+  color: var(--danger-text);
+}
+
+.alert-info {
+  background-color: var(--info);
+  color: var(--info-text);
+}
+
+/* ---------- Badges / pills (admin dashboard status labels) ---------- */
+.badge {
+  border-radius: 9999px;
+  padding: 5px 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Pagination ---------- */
+.page-link {
+  color: var(--accent-hover);
+  border-color: var(--border);
+  border-radius: var(--radius-sm);
+  margin: 0 3px;
+}
+
+.page-item.active .page-link {
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ---------- List groups (used in admin tables etc.) ---------- */
+.list-group-item {
+  border-color: var(--border);
+}
+
+.list-group-item-light {
+  background-color: var(--surface-alt);
+  color: var(--text-primary);
+}
+
+/* ---------- Tables (admin dashboard) ---------- */
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+thead th {
+  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  border-bottom: 2px solid var(--border) !important;
+}
+
+tbody tr:hover {
+  background-color: var(--surface-alt);
 }

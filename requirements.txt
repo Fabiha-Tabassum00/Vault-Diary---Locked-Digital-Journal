@@ -6,3 +6,4 @@ Flask-WTF
 Flask-Mail
 email-validator
 Pillow
+sympy

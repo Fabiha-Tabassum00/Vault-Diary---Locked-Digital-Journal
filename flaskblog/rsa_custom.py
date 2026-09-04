@@ -20,7 +20,7 @@ import random
 import sympy
 
 
-# ---------- core RSA math ----------
+# ----------- core RSA math -----------
 
 def _power(base, expo, m):
     """Fast modular exponentiation: base^expo mod m."""

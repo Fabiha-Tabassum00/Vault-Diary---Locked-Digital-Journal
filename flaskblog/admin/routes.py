@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*-coding:utf-8 -*-
 """
 admin/routes.py
 Admin Dashboard, RBAC Management, Key Rotation, and System Integrity Scanner.
@@ -22,7 +22,7 @@ def dashboard():
     rsa_entry = key_management.get_active_rsa_key_entry()
     ecc_entry = key_management.get_active_ecc_key_entry()
     
-    # Run integrity scan
+    #Running integrity scan
     tampered_users = [u for u in users if not u.verify_integrity()]
     tampered_posts = [p for p in posts if not p.verify_integrity()]
     

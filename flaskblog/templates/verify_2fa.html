@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="content-section">
+        <form method="POST" action="" novalidate>
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Security Verification</legend>
+                
+                <div class="alert alert-light border mb-4">
+                    <div class="d-flex align-items-center">
+                        <div class="mr-3">
+                            {% if current_channel == 'sms' %}
+                                <span class="badge badge-primary p-2" style="font-size: 1.1rem;">📱 SMS</span>
+                            {% else %}
+                                <span class="badge badge-info p-2" style="font-size: 1.1rem;">✉️ Email</span>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <p class="mb-0 text-dark font-weight-bold">
+                                Verification code dispatched
+                            </p>
+                            <small class="text-muted">
+                                Sent to: <strong>{{ masked_target }}</strong> (Valid for 5 minutes)
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-muted">Please enter your 6-digit one-time verification code to complete sign-in.</p>
+                <div class="form-group">
+                    {{ form.otp_code.label(class="form-control-label font-weight-bold") }}
+                    {% if form.otp_code.errors %}
+                        {{ form.otp_code(class="form-control form-control-lg is-invalid text-center font-weight-bold letter-spacing-2", placeholder="------", maxlength="6", autofocus=true, style="letter-spacing: 0.3em; font-size: 1.5rem;") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.otp_code.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.otp_code(class="form-control form-control-lg text-center font-weight-bold", placeholder="------", maxlength="6", autofocus=true, style="letter-spacing: 0.3em; font-size: 1.5rem;") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-outline-info btn-block btn-lg") }}
+            </div>
+        </form>
+
+        <hr class="my-4">
+
+        <div class="resend-options">
+            <h6 class="text-muted mb-2 font-weight-bold">Choose Verification Method:</h6>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="{{ url_for('users.resend_2fa', channel='email') }}" class="btn btn-sm {% if current_channel == 'email' %}btn-info{% else %}btn-outline-secondary{% endif %} mr-2 mb-2">
+                    ✉️ Resend via Email ({{ masked_email }})
+                </a>
+                {% if has_phone %}
+                    <a href="{{ url_for('users.resend_2fa', channel='sms') }}" class="btn btn-sm {% if current_channel == 'sms' %}btn-primary{% else %}btn-outline-secondary{% endif %} mb-2">
+                        📱 Send via SMS ({{ masked_phone }})
+                    </a>
+                {% else %}
+                    <button class="btn btn-sm btn-outline-secondary mb-2" disabled title="No phone number registered on your profile">
+                        📱 Send via SMS (No phone registered)
+                    </button>
+                {% endif %}
+            </div>
+            <small class="text-muted d-block mt-1">
+                You can add or update your mobile contact number in your <a href="{{ url_for('users.account') }}">Account Settings</a> after logging in.
+            </small>
+        </div>
+    </div>
+    <div class="border-top pt-3">
+        <small class="text-muted">
+            Need to restart? <a class="ml-2 link" href="{{ url_for('users.login') }}">Back to Login</a>
+        </small>
+    </div>
+{% endblock content %}

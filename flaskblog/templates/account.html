@@ -2,18 +2,26 @@
 
 {% block content %}
     <div class="content-section">
-	  <div class="media">
-	    <img class="rounded-circle account-img" src="{{ image_file }}">
-	    <div class="media-body">
-	      <h2 class="account-heading">{{ current_user.username }}</h2>
-	      <p class="text-secondary">{{ current_user.email }}</p>
-	    </div>
-	  </div>
-	  <!-- FORM HERE -->
-	  <form method="POST" action="" enctype="multipart/form-data" novalidate>
+      <div class="media align-items-center mb-3">
+        <img class="rounded-circle account-img" src="{{ image_file }}">
+        <div class="media-body">
+          <h2 class="account-heading mb-1">{{ current_user.username }}</h2>
+          <p class="text-secondary mb-1">{{ current_user.email }}</p>
+          <div>
+            {% if current_user.role == 'admin' %}
+                <span class="badge badge-danger">Administrator</span>
+            {% else %}
+                <span class="badge badge-secondary">Member</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- FORM HERE -->
+      <form method="POST" action="" enctype="multipart/form-data" novalidate>
             {{ form.hidden_tag() }}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Account Info</legend>
+                <legend class="border-bottom mb-4">Account Information</legend>
                 <div class="form-group">
                     {{ form.username.label(class="form-control-label") }}
                     {% if form.username.errors %}
@@ -41,19 +49,57 @@
                     {% endif %}
                 </div>
                 <div class="form-group">
+                    {{ form.contact_info.label(class="form-control-label") }}
+                    {% if form.contact_info.errors %}
+                        {{ form.contact_info(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.contact_info.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.contact_info(class="form-control form-control-lg", placeholder="Optional contact info or phone number") }}
+                    {% endif %}
+                </div>
+                <div class="form-group">
                     {{ form.picture.label() }}
                     {{ form.picture(class="form-control-file") }}
                     {% if form.picture.errors %}
-                    	{% for error in form.picture.errors %}
-                        	<span class="text-danger">{{ error }}</span><br>
+                        {% for error in form.picture.errors %}
+                            <span class="text-danger">{{ error }}</span><br>
                         {% endfor %}
                     {% endif %}
                 </div>
             </fieldset>
-            <div class="form-group">
+            <div class="form-group d-flex justify-content-between">
                 {{ form.submit(class="btn btn-outline-info") }}    
+                <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#deleteAccountModal">
+                    Delete Account
+                </button>
             </div>
         </form>
-	</div>
+    </div>
+
+    <!-- Delete Account Modal -->
+    <div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteAccountModalLabel">Delete Your Account?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p class="text-danger mb-0">Are you sure you want to permanently delete your account? All your posts and profile data will be permanently removed.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <form action="{{ url_for('users.delete_account') }}" method="POST">
+              <input type="submit" class="btn btn-danger" value="Yes, Delete My Account">
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
 {% endblock content %}
-    

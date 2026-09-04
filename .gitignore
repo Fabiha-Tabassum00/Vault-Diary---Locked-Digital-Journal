@@ -1,1 +1,7 @@
 secrets.py
+venv/
+__pycache__/
+*.pyc
+instance/
+flaskblog/secrets.py
+flaskblog/master_key.json

@@ -4,19 +4,31 @@
     {% if current_user.is_authenticated %}
       {% for post in posts.items %}
         <article class="media content-section">
-          <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/'+post.author.image_file) }}">
+          {% if post.author %}
+            <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/' + post.author.image_file) }}">
+          {% else %}
+            <img class="rounded-circle article-img" src="{{ url_for('static', filename='profile_pics/default.jpg') }}">
+          {% endif %}
           <div class="media-body">
             <div class="article-metadata">
-              <a class="mr-2" href="{{ url_for('users.user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+              {% if post.author %}
+                <a class="mr-2 font-weight-bold" href="{{ url_for('users.user_posts', username=post.author.username) }}">{{ post.author.username }}</a>
+              {% else %}
+                <span class="mr-2 text-muted">[Unknown Author]</span>
+              {% endif %}
               <small class="text-muted">{{ post.date_posted.strftime('%Y-%m-%d') }}</small>
             </div>
-            <h2><a class="article-title" href="{{ url_for('posts.post',post_id=post.id) }}">{{ post.title }}</a></h2>
+            <h2><a class="article-title" href="{{ url_for('posts.post', post_id=post.id) }}">{{ post.title }}</a></h2>
             <p class="article-content">{{ post.content }}</p>
           </div>
         </article>
+      {% else %}
+        <div class="content-section">
+          <p class="text-muted mb-0">No posts yet. Create the first one using the 'New Post' button!</p>
+        </div>
       {% endfor %}
 
-      {% for page_num in posts.iter_pages(left_edge=1,right_edge=1,left_current=1, right_current=2) %}
+      {% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
         {% if page_num %}
           {% if posts.page == page_num %}
             <a class="btn btn-info mb-4" href="{{ url_for('main.home', page=page_num) }}">{{ page_num }}</a>
@@ -28,12 +40,14 @@
         {% endif %}
       {% endfor %}
     {% else %}
-      <div class="content-section">
-        <h1>Welcome!</h1>
-        <p>Please login first to view posts.</p>
+      <div class="content-section text-center py-5">
+        <h1 class="display-4 font-weight-bold text-dark">Welcome to Vault Diary</h1>
+        <p class="lead mt-3">A modern, secure publishing platform and personal journal.</p>
+        <hr class="my-4">
+        <div class="mt-4">
+          <a class="btn btn-info btn-lg mr-2" href="{{ url_for('users.login') }}">Log In</a>
+          <a class="btn btn-outline-info btn-lg" href="{{ url_for('users.register') }}">Create Account</a>
+        </div>
       </div>
     {% endif %}
-
-    
 {% endblock content %}
-    

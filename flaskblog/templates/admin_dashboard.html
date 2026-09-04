@@ -1,0 +1,201 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="content-section">
+    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-4">
+        <h2>Administrator Security Dashboard</h2>
+        <span class="badge badge-danger p-2">Role: Administrator</span>
+    </div>
+
+    <!-- Security Architecture Summary -->
+    <div class="card mb-4 border-info">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">Cryptographic Architecture Status</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>PII & Auth Encryption:</strong> <span class="badge badge-primary">RSA-512</span></p>
+                    <p><strong>Active RSA Key Version:</strong> <span class="badge badge-secondary">v{{ rsa_version }}</span></p>
+                    <p><strong>User Passwords:</strong> <span class="badge badge-dark">Salted SHA-256 (100k rounds)</span></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Post & Content Encryption:</strong> <span class="badge badge-success">ECC-ElGamal</span></p>
+                    <p><strong>Active ECC Key Version:</strong> <span class="badge badge-secondary">v{{ ecc_version }}</span></p>
+                    <p><strong>Data Integrity:</strong> <span class="badge badge-warning">HMAC-SHA256 MAC Verification</span></p>
+                </div>
+            </div>
+            <div class="alert alert-secondary mb-0 py-2">
+                <small><strong>Note:</strong> Symmetric encryption algorithms (AES/DES) are completely excluded from the system.</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Management & Rotation Panel -->
+    <div class="card mb-4">
+        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Key Rotation</h5>
+        </div>
+        <div class="card-body">
+            <p>Perform atomic key rotation if data is tampered! New asymmetric keypairs will be generated and all stored records will be re-encrypted automatically with fresh HMAC tags.</p>
+            <div class="d-flex flex-wrap">
+                <form method="POST" action="{{ url_for('admin.rotate_keys') }}" class="mr-2 mb-2">
+                    <input type="hidden" name="key_type" value="all">
+                    <button type="submit" class="btn btn-warning" onclick="return confirm('Rotate ALL keys? All user PII and posts will be re-encrypted.');">
+                        Rotate All Keys (RSA & ECC)
+                    </button>
+                </form>
+                <form method="POST" action="{{ url_for('admin.rotate_keys') }}" class="mr-2 mb-2">
+                    <input type="hidden" name="key_type" value="rsa">
+                    <button type="submit" class="btn btn-outline-primary">
+                        Rotate RSA Keys (User PII)
+                    </button>
+                </form>
+                <form method="POST" action="{{ url_for('admin.rotate_keys') }}" class="mb-2">
+                    <input type="hidden" name="key_type" value="ecc">
+                    <button type="submit" class="btn btn-outline-success">
+                        Rotate ECC Keys (Posts)
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- HMAC Data Integrity Scanner -->
+    <div class="card mb-4">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Data Integrity Scan</h5>
+            <form method="POST" action="{{ url_for('admin.scan_integrity') }}" class="mb-0">
+                <button type="submit" class="btn btn-sm btn-info">Run Full HMAC MAC Scan</button>
+            </form>
+        </div>
+        <div class="card-body">
+            <div class="row text-center">
+                <div class="col-md-6">
+                    <div class="p-3 bg-light rounded">
+                        <h6>Total User Records</h6>
+                        <h3>{{ users|length }}</h3>
+                        {% if tampered_users_count == 0 %}
+                            <span class="badge badge-success">100% Authentic MAC Tags</span>
+                        {% else %}
+                            <span class="badge badge-danger">{{ tampered_users_count }} Integrity Compromised!</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="p-3 bg-light rounded">
+                        <h6>Total Post Records</h6>
+                        <h3>{{ posts|length }}</h3>
+                        {% if tampered_posts_count == 0 %}
+                            <span class="badge badge-success">100% Authentic MAC Tags</span>
+                        {% else %}
+                            <span class="badge badge-danger">{{ tampered_posts_count }} Integrity Compromised!</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Management & RBAC -->
+    <div class="card mb-4">
+        <div class="card-header bg-secondary text-white">
+            <h5 class="mb-0">Registered User List</h5>
+        </div>
+        <div class="card-body p-0 table-responsive">
+            <table class="table table-striped table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Decrypted Username</th>
+                        <th>Decrypted Email</th>
+                        <th>Contact Info</th>
+                        <th>Role</th>
+                        <th>Key Ver.</th>
+                        <th>Integrity</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                        <tr>
+                            <td>{{ u.id }}</td>
+                            <td><strong>{{ u.username }}</strong></td>
+                            <td>{{ u.email }}</td>
+                            <td>{{ u.contact_info or 'N/A' }}</td>
+                            <td>
+                                {% if u.role == 'admin' %}
+                                    <span class="badge badge-danger">admin</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">user</span>
+                                {% endif %}
+                            </td>
+                            <td>v{{ u.key_version }}</td>
+                            <td>
+                                {% if u.verify_integrity() %}
+                                    <span class="badge badge-success" title="HMAC-SHA256 Verified">✓ Valid</span>
+                                {% else %}
+                                    <span class="badge badge-danger" title="MAC Mismatch!">✗ Tampered</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if u.id != current_user.id %}
+                                    <form method="POST" action="{{ url_for('admin.toggle_user_role', user_id=u.id) }}" style="display:inline;" class="mr-1">
+                                        <button type="submit" class="btn btn-xs btn-outline-secondary btn-sm">
+                                            Toggle Role
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="{{ url_for('admin.delete_user', user_id=u.id) }}" style="display:inline;" onsubmit="return confirm('Permanently delete this user and all their posts?');">
+                                        <button type="submit" class="btn btn-xs btn-outline-danger btn-sm">
+                                            Delete
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <span class="text-muted small">Current Admin</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Key Vault Audit Log -->
+    <div class="card mb-2">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">Key Vault Stored Keys Audit</h5>
+        </div>
+        <div class="card-body p-0 table-responsive">
+            <table class="table table-sm table-bordered mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Algorithm</th>
+                        <th>Version</th>
+                        <th>Status</th>
+                        <th>Created At (UTC)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for k in all_keys %}
+                        <tr class="{{ 'table-success' if k.is_active else '' }}">
+                            <td>{{ k.id }}</td>
+                            <td><strong>{{ k.key_type }}</strong></td>
+                            <td>v{{ k.version }}</td>
+                            <td>
+                                {% if k.is_active %}
+                                    <span class="badge badge-success">ACTIVE</span>
+                                {% else %}
+                                    <span class="badge badge-secondary">ROTATED</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ k.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock content %}

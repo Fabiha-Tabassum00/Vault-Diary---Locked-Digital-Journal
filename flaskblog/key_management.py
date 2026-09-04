@@ -19,8 +19,8 @@ Master keypair:
   A one-time, app-level RSA keypair kept in flaskblog/master_key.json
   (NOT committed to git — see .gitignore). This is the "root of trust":
   every user/post private key stored in KeyVault is encrypted under the
-  master PUBLIC key, and only decrypted (in memory, on demand) using the
-  master PRIVATE key. This mirrors how real key-management systems (AWS
+  master Public Key, and only decrypted (in memory, on demand) using the
+  master Private Key. This mirrors how real key-management systems (AWS
   KMS, HashiCorp Vault) protect stored key material.
 """
 
@@ -34,7 +34,7 @@ MASTER_KEY_FILE = os.path.join(os.path.dirname(__file__), "master_key.json")
 MASTER_KEY_BITS = 1024  # sized up since this key protects everything else
 
 
-# ---------- master keypair (root of trust) ----------
+# <---------- master keypair (root of trust) ---------->
 
 def get_or_create_master_keypair():
     """Load the master RSA keypair from disk, or generate + save it if missing."""

@@ -1,9 +1,9 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <h1>About Page</h1>
+    <h1>About VaultDiary</h1>
     <div class="content-section">
-    	<p>This is a simple Web app made by <a href="https://github.com/harshit-saraswat">Harshit Saraswat</a> for practicing Web Development using Flask and Python as Backend.</p>
+        <p>VaultDiary is a private, encrypted diary application built for CSE447: Cryptography and Cryptanalysis. It was developed by forking <a href="https://github.com/harshit-saraswat/Simple-Blog-w-Flask">Simple-Blog-w-Flask</a>, an open-source Flask blog project. Me and my teammates have substantially modified it into a secure journaling platform.</p>
+        <p>On top of the original login, registration, and post-management foundation, this project adds from-scratch asymmetric encryption (RSA and ECC), custom salted password hashing, HMAC-based two-factor authentication, a key management and rotation system, HMAC data integrity verification, role-based access control, and fully self-issued session management.</p>
     </div>
 {% endblock content %}
-    
